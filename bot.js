@@ -49,13 +49,14 @@ queue.process(1, async job => {
     }
   }
 
+  const status = formatTemplate(process.env.TWITTER_TEMPLATE, data);
+  console.log(status)
   resp = await T.post('statuses/update', {
-    status: formatTemplate(process.env.TWITTER_TEMPLATE, data),
+    status,
     media_ids: mediaIdStr ?? [mediaIdStr],
   });
 
   console.log({ data, resp })
-  throw new Error("only 1")
 })
 
 function formatTemplate(template, vars) {

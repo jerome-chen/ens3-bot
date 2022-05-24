@@ -9,7 +9,7 @@
         "twit": "*"
     },
     "scripts": {
-        "start": "sed -i.bak s/1.1/2/g ./node_modules/twit/lib/endpoints.js  && node bot.js"
+        "start": "node bot.js #sed -i.bak s/1.1/2/g ./node_modules/twit/lib/endpoints.js"
     },
     "repository": {
         "type": "git",
