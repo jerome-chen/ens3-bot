@@ -4,10 +4,12 @@
     "description": "Twitter Bot - NodeJS",
     "author": "Nishant Srivastava <nisrulz@gmail.com>",
     "dependencies": {
+        "dotenv": "^16.0.1",
+        "node-libcurl": "^2.3.4",
         "twit": "*"
     },
     "scripts": {
-        "start": "node bot.js"
+        "start": "sed -i.bak s/1.1/2/g ./node_modules/twit/lib/endpoints.js  && node bot.js"
     },
     "repository": {
         "type": "git",
