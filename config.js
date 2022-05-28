@@ -1,5 +1,5 @@
 const getEnv = (key) => {
-  const env = process.env.NODE_ENV || "development";
+  const env = (process.env.NODE_ENV || "development").toUpperCase();
   console.log(`${env}_${key}`)
   return process.env[`${env}_${key}`] || process.env[`${key}`]
 }
