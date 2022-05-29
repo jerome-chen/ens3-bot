@@ -33,43 +33,50 @@ if (config.consumer_key == 'blah' ||
 }
 
 const T = new Twit(require('./config.js'))
+console.log(T);
 
 const TIMEOUT = 60 * 60 * 1000; // 60 minutes
 queue.process(1, async job => {
   if (Date.now() >= (job.data.created_date || job.options.timestamp) + TIMEOUT) {
     throw new Error('job timed out');
   }
-  const item = job.data;
-  console.log(`Processing ${item.name}...`)
-  let resp;
-  if (typeof item === 'string') {
-    return await T.post('statuses/update', { status: item });
-  }
-
-  let mediaIdStr;
-  if (item.pic) {
-    let { data: buffer, headers } = await curly.get(item.pic);
-    console.log("Pic downloaded");
-    buffer = await toPNG({ buffer, headers })
-    if (buffer) {
-      const { item: { media_id_string } } = await T.post('media/upload', { media_item: buffer });
-      mediaIdStr = media_id_string
-      console.log(`Media uploaded to Twitter with ID: ${mediaIdStr}`)
-      var altText = item.name + " - ENS3.org"
-      var meta_params = { media_id: mediaIdStr, alt_text: { text: altText } }
-      const { item } = await T.post('media/metadata/create', meta_params);
-      console.log(`Meta created as: ${item}`)
+  try {
+    const item = job.data;
+    console.log(`Processing ${item.name}...`)
+    let resp;
+    if (typeof item === 'string') {
+      return await T.post('statuses/update', { status: item });
     }
+
+    let mediaIdStr;
+    if (item.pic) {
+      let { data: buffer, headers } = await curly.get(item.pic);
+      console.log(`1 Pic downloaded:  ${buffer.length}`);
+      buffer = await toPNG({ buffer, headers })
+      console.log(`2 PNG generated: ${buffer.length}`)
+      if (buffer) {
+        const { data: { media_id_string } } = await T.post('media/upload', { media_data: buffer.toString("base64") });
+        mediaIdStr = media_id_string
+        console.log(`3 Media uploaded to Twitter with ID: ${mediaIdStr}`)
+        var altText = item.name + " - ENS3.org"
+        var meta_params = { media_id: mediaIdStr, alt_text: { text: altText } }
+        const result = await T.post('media/metadata/create', meta_params);
+        console.log(`4 Meta created.`)
+      }
+    }
+
+    const status = formatTemplate(process.env.TWITTER_TEMPLATE, item);
+    console.log(`5 Twitter is ready: ${status}`)
+    resp = await T.post('statuses/update', {
+      status,
+      media_ids: mediaIdStr ?? [mediaIdStr],
+    });
+
+    console.log(`6 Twitter sent.`)
+  } catch (e) {
+    console.error(e);
+    throw e;
   }
-
-  const status = formatTemplate(process.env.TWITTER_TEMPLATE, item);
-  console.log(`Twitter is ready: ${status}`)
-  resp = await T.post('statuses/update', {
-    status,
-    media_ids: mediaIdStr ?? [mediaIdStr],
-  });
-
-  console.log({ item, resp })
 })
 
 function formatTemplate(template, vars) {
@@ -89,11 +96,13 @@ async function toPNG({ buffer, headers }) {
   if (header) {
     const contentType = (header['content-type']);
     if (contentType.includes("svg")) {
-      // console.log('is SVG', buffer instanceof Buffer, buffer.length)
-      buffer = await svg2png(buffer.toString("utf-8"), {
+      console.log('is SVG', buffer instanceof Buffer, buffer.length)
+      buffer = Buffer.from(await svg2png(buffer.toString("utf-8"), {
         fonts, defaultFontFamily
-      })
+      }));
     }
+  } else {
+    console.log('NOT SVG!!', headers)
   }
 
   return buffer;
