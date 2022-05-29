@@ -4,6 +4,7 @@
     "description": "Twitter Bot - NodeJS",
     "author": "Nishant Srivastava <nisrulz@gmail.com>",
     "dependencies": {
+        "bee-queue": "^1.4.0",
         "dotenv": "^16.0.1",
         "node-libcurl": "^2.3.4",
         "svg2png": "^4.1.1",
