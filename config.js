@@ -10,5 +10,5 @@ module.exports = {
   consumer_secret: getEnv('CONSUMER_SECRET') || 'blah',
   access_token: getEnv('ACCESS_TOKEN') || 'blah',
   access_token_secret: getEnv('ACCESS_TOKEN_SECRET') || 'blah',
-  bearer_token: getEnv('BEAR_TOKEN') || 'blah'
+  bearer_token: getEnv('BEARER_TOKEN') || 'blah'
 }
