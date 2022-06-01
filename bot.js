@@ -154,7 +154,7 @@ async function bufferToPNG(buffer) {
   try {
     console.log('is SVG', buffer instanceof Buffer, buffer.length)
     const svg = buffer.toString("utf-8").replace("</svg>", '<text x="150" y="61" font-size="16px" fill="white">ΞNS³.org</text></svg>')
-    buffer = Buffer.from(await svg2png(svg));
+    buffer = Buffer.from(await svg2png(svg, { scale: 2 }));
 
     return buffer;
   } catch (e) {
