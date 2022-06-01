@@ -73,7 +73,7 @@ queue.process(1, async job => {
       let { data: buffer, headers } = await curly.get(item.pic);
       console.log(`1 Pic downloaded:  ${buffer.length}`);
       buffer = await toPNG({ buffer, headers })
-      console.log(`2 PNG generated: ${buffer.length}`)
+      console.log(`2 PNG generated: ${buffer.length || 0}`)
       if (buffer) {
         const { data: { media_id_string } } = await T.post('media/upload', { media_data: buffer.toString("base64") });
         mediaIdStr = media_id_string
@@ -87,7 +87,7 @@ queue.process(1, async job => {
     console.log(`5 Twitter is ready: ${status}`)
     resp = await T.post('statuses/update', {
       status,
-      media_ids: mediaIdStr ?? [mediaIdStr],
+      media_ids: mediaIdStr ? [mediaIdStr] : [],
     });
 
     console.log(`6 Twitter sent.`)
@@ -138,11 +138,16 @@ async function toPNG({ buffer, headers }) {
 }
 
 async function toPNG(buffer) {
-  console.log('is SVG', buffer instanceof Buffer, buffer.length)
-  const svg = buffer.toString("utf-8").replace("</svg>", '<text x="150" y="61" font-size="16px" fill="white">ΞNS³.org</text></svg>')
-  buffer = Buffer.from(await svg2png(svg));
+  try {
+    console.log('is SVG', buffer instanceof Buffer, buffer.length)
+    const svg = buffer.toString("utf-8").replace("</svg>", '<text x="150" y="61" font-size="16px" fill="white">ΞNS³.org</text></svg>')
+    buffer = Buffer.from(await svg2png(svg));
 
-  return buffer;
+    return buffer;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }
 
 function msleep(n) {
