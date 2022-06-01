@@ -105,7 +105,7 @@ function formatTemplate(template, vars) {
 
 console.log("Twitter bot is running...")
 
-const fonts = ['satoshi/Satoshi-Regular.ttf', 'Plus Jakarta Sans/PlusJakartaSans-VariableFont_wght.ttf', 'DejaVu Sans/DejaVuSans.ttf', 'emoji/AppleColorEmoji-SVG.ttf'].map(f => fs.readFileSync(`./fonts/${f}`))
+const fonts = ['satoshi/Satoshi-Regular.ttf', 'Plus Jakarta Sans/PlusJakartaSans-VariableFont_wght.ttf', 'DejaVu Sans/DejaVuSans.ttf', 'emoji/NotoColorEmoji.ttf'].map(f => fs.readFileSync(`./fonts/${f}`))
 const defaultFontFamily = {
   sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
   sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
