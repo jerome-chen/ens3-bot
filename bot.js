@@ -55,6 +55,7 @@ queue.process(1, async job => {
   await initializeWasm();
 
   if (Date.now() >= (job.data.created_date || job.options.timestamp) + TIMEOUT) {
+    console.log(`OPENSEA => Expired: ${job.name} ${moment(job.data.created_date).format("YYYY-MM-DD HH:mm")}`)
     return true;
   }
   try {
