@@ -47,6 +47,17 @@ if (config.consumer_key == 'blah' ||
   return;
 }
 
+// (async function a() {
+//   await initializeWasm();
+//   item = { pic: 'https://openseauserdata.com/files/c45acf4b2f7068e2dcb6b270d1fd198b.svg' }
+//   let { data: buffer, headers } = await curly.get(item.pic);
+//   console.log(`1 Pic downloaded:  ${buffer.length}, url: ${item.pic} `);
+
+//   buffer = await toPNG({ buffer, headers });
+//   console.log(buffer)
+// })();
+// return;
+
 const T = new Twit(require('./config.js'))
 console.log(T);
 
@@ -72,7 +83,7 @@ queue.process(1, async job => {
     let mediaIdStr;
     if (item.pic) {
       let { data: buffer, headers } = await curly.get(item.pic);
-      console.log(`1 Pic downloaded:  ${buffer.length}`);
+      console.log(`1 Pic downloaded:  ${buffer.length}, url: ${item.pic} `);
       buffer = await toPNG({ buffer, headers })
       console.log(`2 PNG generated: ${buffer.length || 0}`)
       if (buffer) {
@@ -125,11 +136,12 @@ async function initializeWasm() {
 }
 
 async function toPNG({ buffer, headers }) {
+  console.log(headers)
   const header = headers.find(a => a['content-type']);
   if (header) {
     const contentType = (header['content-type']);
     if (contentType.includes("svg")) {
-      buffer = toPNG(buffer)
+      buffer = bufferToPNG(buffer)
     }
   } else {
     console.log('NOT SVG!!', headers)
@@ -138,7 +150,7 @@ async function toPNG({ buffer, headers }) {
   return buffer;
 }
 
-async function toPNG(buffer) {
+async function bufferToPNG(buffer) {
   try {
     console.log('is SVG', buffer instanceof Buffer, buffer.length)
     const svg = buffer.toString("utf-8").replace("</svg>", '<text x="150" y="61" font-size="16px" fill="white">ΞNS³.org</text></svg>')
