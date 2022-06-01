@@ -15,10 +15,8 @@ require("dotenv").config()
 
 // We need to include our configuration file
 
-initialize(
-  fs.readFileSync('./node_modules/svg2png-wasm/svg2png_wasm_bg.wasm'),
-);
-
+let initialized = false;
+let svg2png;
 // console.log(formatTemplate(process.env.TWITTER_TEMPLATE, {
 //   "name": utf8.decode("superman\xf0\x9f\xa6\xb8\xe2\x80\x8d\xe2\x99\x82.eth"),
 //   "tokenId": "34079213711217391297172156863573744046950574501157127940254095738189894385198",
@@ -54,6 +52,8 @@ console.log(T);
 
 const TIMEOUT = 60 * 60 * 1000; // 60 minutes
 queue.process(1, async job => {
+  await initializeWasm();
+
   if (Date.now() >= (job.data.created_date || job.options.timestamp) + TIMEOUT) {
     return true;
   }
@@ -105,15 +105,23 @@ function formatTemplate(template, vars) {
 
 console.log("Twitter bot is running...")
 
-const fonts = ['satoshi/Satoshi-Regular.ttf', 'Plus Jakarta Sans/PlusJakartaSans-VariableFont_wght.ttf', 'DejaVu Sans/DejaVuSans.ttf', 'emoji/NotoColorEmoji.ttf'].map(f => fs.readFileSync(`./fonts/${f}`))
-const defaultFontFamily = {
-  sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-  sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-  cursiveFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-  fantasyFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-}
+async function initializeWasm() {
+  if (initialized) return;
+  const fonts = ['satoshi/Satoshi-Regular.ttf', 'Plus Jakarta Sans/PlusJakartaSans-VariableFont_wght.ttf', 'DejaVu Sans/DejaVuSans.ttf', 'emoji/NotoColorEmoji.ttf'].map(f => fs.readFileSync(`./fonts/${f}`))
+  const defaultFontFamily = {
+    sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
+    sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
+    cursiveFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
+    fantasyFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
+  }
 
-const svg2png = createSvg2png({ fonts, defaultFontFamily });
+  await initialize(
+    fs.readFileSync('./node_modules/svg2png-wasm/svg2png_wasm_bg.wasm'),
+  );
+
+  svg2png = createSvg2png({ fonts, defaultFontFamily });
+  initialized = true;
+}
 
 async function toPNG({ buffer, headers }) {
   const header = headers.find(a => a['content-type']);
