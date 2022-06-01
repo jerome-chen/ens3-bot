@@ -121,10 +121,10 @@ async function initializeWasm() {
   if (initialized) return;
   const fonts = ['satoshi/Satoshi-Regular.ttf', 'Plus Jakarta Sans/PlusJakartaSans-VariableFont_wght.ttf', 'DejaVu Sans/DejaVuSans.ttf', 'emoji/NotoColorEmoji.ttf'].map(f => fs.readFileSync(`./fonts/${f}`))
   const defaultFontFamily = {
-    sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-    sansSerifFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-    cursiveFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
-    fantasyFamily: 'Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif',
+    sansSerifFamily: 'Satoshi, Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji',
+    sansSerifFamily: 'Satoshi, Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji',
+    cursiveFamily: 'Satoshi, Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji',
+    fantasyFamily: 'Satoshi, Plus Jakarta Sans, DejaVu Sans, Noto Color Emoji',
   }
 
   await initialize(
