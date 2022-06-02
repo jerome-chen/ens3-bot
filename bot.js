@@ -65,10 +65,10 @@ const TIMEOUT = 60 * 60 * 1000; // 60 minutes
 queue.process(1, async job => {
   await initializeWasm();
 
-  if (Date.now() >= (job.data.created_date || job.options.timestamp) + TIMEOUT) {
-    console.log(`OPENSEA => Expired: ${job.data.name} ${moment(job.data.created_date).format("YYYY-MM-DD HH:mm")}`)
-    return true;
-  }
+  // if (Date.now() >= (job.data.created_date || job.options.timestamp) + TIMEOUT) {
+  //   console.log(`OPENSEA => Expired: ${job.data.name} ${moment(job.data.created_date).format("YYYY-MM-DD HH:mm")}`)
+  //   return true;
+  // }
   try {
     const item = job.data;
     console.log(`Processing ${item.name}...`)
@@ -79,6 +79,8 @@ queue.process(1, async job => {
 
     const status = formatTemplate(process.env.TWITTER_TEMPLATE, item);
     const altText = formatTemplate(process.env.TWITTER_ALT_TEMPLATE, item);
+
+    // return console.log(status)
 
     let mediaIdStr;
     if (item.pic) {
